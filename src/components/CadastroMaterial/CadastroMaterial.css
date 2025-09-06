@@ -1,0 +1,30 @@
+.material-form .form-grid-material {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.buttons-container {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.action-button {
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1em;
+  font-weight: bold;
+}
+
+.action-button.cadastrar {
+  background-color: #007bff; /* Azul padrão */
+}
+
+.action-button.add-material {
+  background-color: #4a4e91;
+}

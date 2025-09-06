@@ -1,0 +1,23 @@
+.app-header {
+  background-color: #4a4e91; /* Cor extraída da imagem */
+  color: white;
+  padding: 15px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: 1.5em;
+  font-weight: normal;
+}
+
+.logo-container .logo-placeholder {
+  width: 40px;
+  height: 40px;
+  background-color: #f0c340; /* Cor do logo placeholder */
+  border-radius: 50%;
+  border: 2px solid #fff;
+}
