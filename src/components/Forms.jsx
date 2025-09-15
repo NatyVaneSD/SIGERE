@@ -129,11 +129,6 @@ export default function Forms() {
             </Form.Group>
           </Col>
         </Row>
-        <div className="d-flex justify-content-center mb-3">
-          <Button className="mb-3 w-50" variant="outline-primary">
-            Cadastrar
-          </Button>
-        </div>
       </Form>
 
       {/* Formulário de Cadastro de Material */}
@@ -187,7 +182,7 @@ export default function Forms() {
             </Col>
           </Row>
 
-          <Row className="mb-5">
+          <Row className="mb-3">
             <Col className="me-4">
               <Form.Group>
                 <Form.Label>Local de armazenamento:</Form.Label>
@@ -202,18 +197,28 @@ export default function Forms() {
 
             <Col>
               <Form.Group controlId="Numero do documento">
-                <Form.Label>Quantidade:</Form.Label>
-                <Form.Control type="number" placeholder="UNID" />
+                <Form.Label>Prateleira:</Form.Label>
+                <Form.Control type="text" placeholder="Inserir" />
               </Form.Group>
             </Col>
           </Row>
-          <div className="d-flex justify-content-left mb-2">
-            <Button className="mb-3 w-25" variant="outline-primary">
-              Cadastrar
-            </Button>
-          </div>
+          {/*Botão de cadastrar material*/}
+          <Container>
+            <Row>
+              <div className="d-flex justify-content-left mb-3 gap-2">
+                <Button variant="outline-primary">Cadastrar Material</Button>
+                <Button variant="outline-success">Adicionar Material</Button>
+              </div>
+            </Row>
+          </Container>
         </Form>
       </Container>
+      {/*Botão de cadastrar requisição*/}
+      <div className="d-flex justify-content-end mb-3">
+        <Button className="mb-3 w-25" variant="primary">
+          Cadastrar Requisição
+        </Button>
+      </div>
     </Container>
   );
 }
