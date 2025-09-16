@@ -50,9 +50,7 @@ jobs:
           echo "DEBUG=True" >> $GITHUB_ENV
 
       - name: Rodar Análise de Código com Pylint
-        run: |
-          cd backend
-          pylint gerenciamento --fail-under=7.0
+        run: cd backend && pylint gerenciamento --fail-under=7.0
 
       - name: Rodar Migrações do Django
         run: |
