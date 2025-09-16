@@ -38,7 +38,7 @@ export default function Forms() {
   };
 
   return (
-    <Container fluid>
+    <Container>
       <Row className="mb-3">
         <h4>Cadastrar Requisição</h4>
       </Row>
