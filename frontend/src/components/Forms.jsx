@@ -1,10 +1,34 @@
+// frontend/src/components/Forms.jsx
+
 import { useState } from "react";
 import { Form, Row, Col, Button, Container } from "react-bootstrap";
 import "../App.css";
 import MaterialForm from "./MaterialForm";
 
 export default function Forms() {
-  // Funções e estado para os múltiplos formulários de material
+  // 1. ADICIONADO: Estado para guardar os dados do formulário de Requisição
+  const [requisicaoData, setRequisicaoData] = useState({
+    tipo_documento: "",
+    numero_documento: "",
+    numero_requisicao: "",
+    data_requisicao: "",
+    solicitante: "",
+    unidade_solicitante: "",
+    tipo_exame: "",
+    data_recebimento: "",
+    numero_protocolo: "",
+    numero_caso: "",
+    nivel_prioridade: "",
+    status: "Pendente",
+  });
+
+  // 2. ADICIONADO: Handler para atualizar o estado da requisição
+  const handleRequisicaoChange = (e) => {
+    const { name, value } = e.target;
+    setRequisicaoData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // --- Funções e estado para os múltiplos formulários de material (SEU CÓDIGO ORIGINAL) ---
   const initialMaterial = {
     tipoEquipamento: "",
     outrosTipoEquipamento: "",
@@ -32,9 +56,44 @@ export default function Forms() {
     setMateriais(newMateriais);
   };
 
-  const handleCadastrarMaterial = () => {
-    console.log("Dados a serem enviados:", materiais);
-    // Sua lógica de envio de dados para o backend
+  // 3. ADICIONADO: Lógica de envio para o backend
+  const handleSubmit = (event) => {
+    event.preventDefault();
+
+    // Converte as chaves de camelCase (JavaScript) para snake_case (Python/Django)
+    const materiaisParaEnviar = materiais.map(mat => ({
+        tipo_equipamento: mat.tipoEquipamento,
+        outros_tipo_equipamento: mat.outrosTipoEquipamento,
+        quantidade: mat.quantidade,
+        local_armazenamento: mat.localArmazenamento,
+        prateleira: mat.prateleira
+    }));
+
+    const finalPayload = {
+      ...requisicaoData,
+      materiais: materiaisParaEnviar,
+    };
+
+    console.log("Enviando para o backend:", finalPayload);
+
+    fetch("http://localhost:8000/api/requisicoes/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(finalPayload),
+    })
+      .then(response => response.ok ? response.json() : response.json().then(err => Promise.reject(err)))
+      .then(data => {
+        console.log("Sucesso:", data);
+        alert("Requisição cadastrada com sucesso!");
+        // Limpa formulários
+        setRequisicaoData({ tipo_documento: "", numero_documento: "", numero_requisicao: "", data_requisicao: "", solicitante: "", unidade_solicitante: "", tipo_exame: "", data_recebimento: "", numero_protocolo: "", numero_caso: "", nivel_prioridade: "", status: "Pendente" });
+        setMateriais([initialMaterial]);
+      })
+      .catch(error => {
+        console.error("Erro ao cadastrar:", error);
+        const errorMessages = Object.entries(error).map(([key, value]) => `${key}: ${Array.isArray(value) ? value.join(", ") : value}`).join("\n");
+        alert(`Erro ao cadastrar:\n${errorMessages}`);
+      });
   };
 
   return (
@@ -42,119 +101,120 @@ export default function Forms() {
       <Row className="mb-3">
         <h4>Cadastrar Requisição</h4>
       </Row>
-      {/* Começo do Formulário de Requisição */}
-      <Form>
-        {/* ... Seu código original do formulário de requisição ... */}
+      {/* 4. ADICIONADO: onSubmit no <Form> para ativar a função handleSubmit */}
+      <Form onSubmit={handleSubmit}>
+        {/* 5. ADICIONADO: name, value e onChange em todos os campos */}
         <Row className="mb-3">
           <Col className="me-4">
             <Form.Group>
               <Form.Label>Tipo de documento:</Form.Label>
-              <Form.Select aria-label="Tipo de documento">
-                <option>Opções</option>
-                <option value="1">Ofício</option>
-                <option value="2">BO</option>
-                <option value="3">IPL</option>
+              <Form.Select name="tipo_documento" value={requisicaoData.tipo_documento} onChange={handleRequisicaoChange} required>
+                <option value="">Opções</option>
+                <option value="Ofício">Ofício</option>
+                <option value="BO">BO</option>
+                <option value="IPL">IPL</option>
               </Form.Select>
             </Form.Group>
           </Col>
           <Col>
-            <Form.Group controlId="Numero do documento">
+            <Form.Group>
               <Form.Label>Nº do documento:</Form.Label>
-              <Form.Control type="number" placeholder="Inserir" />
+              <Form.Control name="numero_documento" value={requisicaoData.numero_documento} onChange={handleRequisicaoChange} type="text" placeholder="Inserir" required />
             </Form.Group>
           </Col>
         </Row>
-        {/* ... outros campos do formulário de requisição ... */}
+        
         <Row className="mb-3">
           <Col className="me-4">
-            <Form.Group controlId="Numero da requisicao">
+            <Form.Group>
               <Form.Label>Nº da Requisição:</Form.Label>
-              <Form.Control type="number" placeholder="Inserir" />
+              <Form.Control name="numero_requisicao" value={requisicaoData.numero_requisicao} onChange={handleRequisicaoChange} type="text" placeholder="Inserir" required />
             </Form.Group>
           </Col>
           <Col>
-            <Form.Group controlId="Data da requisicao">
+            <Form.Group>
               <Form.Label>Data da requisição:</Form.Label>
-              <Form.Control type="date" placeholder="dd/mm/aaa" />
+              <Form.Control name="data_requisicao" value={requisicaoData.data_requisicao} onChange={handleRequisicaoChange} type="date" required />
             </Form.Group>
           </Col>
         </Row>
-        {/* ... outros campos ... */}
+        
         <Row className="mb-3">
           <Col className="me-4">
-            <Form.Group controlId="Solicitante">
+            <Form.Group>
               <Form.Label>Solicitante:</Form.Label>
-              <Form.Control type="text" placeholder="Inserir" />
+              <Form.Control name="solicitante" value={requisicaoData.solicitante} onChange={handleRequisicaoChange} type="text" placeholder="Inserir" required />
             </Form.Group>
           </Col>
           <Col>
-            <Form.Group controlId="Undade Solicitante">
+            <Form.Group>
               <Form.Label>Unidade Solicitante:</Form.Label>
-              <Form.Control type="text" placeholder="Inserir" />
+              <Form.Control name="unidade_solicitante" value={requisicaoData.unidade_solicitante} onChange={handleRequisicaoChange} type="text" placeholder="Inserir" required />
             </Form.Group>
           </Col>
         </Row>
-        {/* ... outros campos ... */}
+        
         <Row className="mb-3">
           <Col className="me-4">
             <Form.Group>
               <Form.Label>Tipo de exame:</Form.Label>
-              <Form.Select aria-label="Tipo de exame">
-                <option>Opções</option>
-                <option value="1">Análise de conteúdo</option>
-                <option value="2">Extração de conteúdo</option>
+              <Form.Select name="tipo_exame" value={requisicaoData.tipo_exame} onChange={handleRequisicaoChange} required>
+                <option value="">Opções</option>
+                <option value="Análise de conteúdo">Análise de conteúdo</option>
+                <option value="Extração de conteúdo">Extração de conteúdo</option>
               </Form.Select>
             </Form.Group>
           </Col>
           <Col>
-            <Form.Group controlId="Data do recebimento">
+            <Form.Group>
               <Form.Label>Data do recebimento:</Form.Label>
-              <Form.Control type="date" placeholder="dd/mm/aaa" />
+              <Form.Control name="data_recebimento" value={requisicaoData.data_recebimento} onChange={handleRequisicaoChange} type="date" />
             </Form.Group>
           </Col>
         </Row>
-        {/* ... outros campos ... */}
+        
         <Row className="mb-3">
           <Col className="me-4">
-            <Form.Group controlId="Numero do protocolo">
+            <Form.Group>
               <Form.Label>Nº do protocolo:</Form.Label>
-              <Form.Control type="number" placeholder="Inserir" />
+              <Form.Control name="numero_protocolo" value={requisicaoData.numero_protocolo} onChange={handleRequisicaoChange} type="text" placeholder="Inserir" />
             </Form.Group>
           </Col>
           <Col>
-            <Form.Group controlId="Numero do caso">
+            <Form.Group>
               <Form.Label>Nº do caso:</Form.Label>
-              <Form.Control type="number" placeholder="Inserir" />
+              <Form.Control name="numero_caso" value={requisicaoData.numero_caso} onChange={handleRequisicaoChange} type="text" placeholder="Inserir" />
             </Form.Group>
           </Col>
         </Row>
-        {/* ... outros campos ... */}
+        
         <Row className="mb-4">
           <Col className="me-4">
             <Form.Group>
               <Form.Label>Nível de prioridade:</Form.Label>
-              <Form.Select aria-label="Nível de prioridade">
-                <option>Opções</option>
-                <option value="1">Prioridade 1</option>
-                <option value="2">Prioridade 2</option>
-                <option value="3">Prioridade 3</option>
+              <Form.Select name="nivel_prioridade" value={requisicaoData.nivel_prioridade} onChange={handleRequisicaoChange} required>
+                <option value="">Opções</option>
+                <option value="Prioridade 1">Prioridade 1</option>
+                <option value="Prioridade 2">Prioridade 2</option>
+                <option value="Prioridade 3">Prioridade 3</option>
               </Form.Select>
             </Form.Group>
           </Col>
           <Col>
             <Form.Group>
               <Form.Label>Status:</Form.Label>
-              <Form.Select aria-label="Status" defaultValue="pendente">
-                <option value="pendente">Pendente</option>
-                <option value="1">Em andamento</option>
-                <option value="2">Finalizado</option>
-                <option value="3">Cancelado</option>
+              <Form.Select name="status" value={requisicaoData.status} onChange={handleRequisicaoChange}>
+                <option value="Pendente">Pendente</option>
+                <option value="Em andamento">Em andamento</option>
+                <option value="Finalizado">Finalizado</option>
+                <option value="Cancelado">Cancelado</option>
               </Form.Select>
             </Form.Group>
           </Col>
         </Row>
 
-        {/* AQUI COMEÇA A PARTE DO FORMULÁRIO DE MATERIAL */}
+        <hr className="my-4"/>
+
         {materiais.map((material, index) => (
           <MaterialForm
             key={index}
@@ -164,10 +224,8 @@ export default function Forms() {
             handleRemoveMaterial={handleRemoveMaterial}
           />
         ))}
-        {/* Botões para adicionar e cadastrar */}
+        
         <Container className="p-0">
-          {" "}
-          {/* Adicionei p-0 aqui para remover padding */}
           <Row>
             <div className="d-flex justify-content-start mb-3 gap-2">
               <Button variant="outline-success" onClick={handleAddMaterial}>
@@ -177,7 +235,8 @@ export default function Forms() {
           </Row>
         </Container>
         <div className="d-flex justify-content-end mb-3">
-          <Button className="mb-3 w-25" variant="primary">
+          {/* 6. ADICIONADO: type="submit" para acionar o onSubmit do formulário */}
+          <Button type="submit" className="mb-3 w-25" variant="primary">
             Cadastrar Requisição
           </Button>
         </div>
