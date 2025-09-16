@@ -41,9 +41,9 @@ EQUIPAMENTO_CHOICES = [
 ]
 
 DEPOSITO_CHOICES = [
-    ("D1", "Deposito 01"),
-    ("D2", "Deposito 02"),
-    ("D3", "Deposito 03"),
+    ("D1", "Depósito 1"),
+    ("D2", "Depósito 2"),
+    ("D3", "Depósito 3"),
 ]
 
 class UnidadeSolicitante(models.Model):
@@ -93,7 +93,8 @@ class Perito(models.Model):
 
 class Requisicao(models.Model):
     tipo_documento = models.CharField(max_length=4, choices=TIPO_DOCUMENTO_CHOICES, verbose_name="Tipo de Documento")
-    numero_caso = models.CharField(max_length=9, unique=True, verbose_name="Número do Caso")
+    numero_documento = models.CharField(max_length=20, verbose_name="Número do Documento")
+    numero_caso = models.CharField(max_length=20, unique=True, verbose_name="Número do Caso")
     data_requisicao = models.DateField(verbose_name="Data da Requisição")
     data_recebimento = models.DateField(verbose_name="Data de Recebimento")
     objetivo_pericia = models.TextField(verbose_name="Objetivo da Perícia")
@@ -120,8 +121,8 @@ class Requisicao(models.Model):
 
 class Protocolo(models.Model):
     numero_protocolo = models.CharField(max_length=50, unique=True, verbose_name="Número do Protocolo")
-    data_entrega_perito = models.DateField(verbose_name="Data de Entrega ao Perito")
-    perito = models.ForeignKey(Perito, on_delete=models.SET_NULL, null=True, verbose_name="Perito")
+    data_entrega_perito = models.DateField(verbose_name="Data de Entrega ao Perito", null=True, blank=True)  # Tornar opcional
+    perito = models.ForeignKey(Perito, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Perito")  # Tornar opcional
     requisicao = models.ForeignKey(Requisicao, on_delete=models.CASCADE, verbose_name="Requisição")
     data_criacao = models.DateTimeField(auto_now_add=True, verbose_name="Data de Criação")
     
@@ -165,7 +166,7 @@ class Armazenamento(models.Model):
 
 class Equipamento(models.Model):
     tipo_equipamento = models.ForeignKey(TipoEquipamento, on_delete=models.CASCADE, verbose_name="Tipo de Equipamento")
-    quant_equipamente = models.PositiveSmallIntegerField(verbose_name="Quantidade de Equipamentos")
+    quant_equipamento = models.PositiveSmallIntegerField(verbose_name="Quantidade de Equipamentos")
     local_armazenamento = models.ForeignKey(Armazenamento, on_delete=models.SET_NULL, null=True, verbose_name="Local de Armazenamento")
     protocolo = models.ForeignKey(Protocolo, on_delete=models.CASCADE, verbose_name="Protocolo")
     data_cadastro = models.DateTimeField(auto_now_add=True, verbose_name="Data de Cadastro")

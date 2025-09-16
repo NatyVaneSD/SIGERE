@@ -20,7 +20,7 @@ class ProtocoloAdmin(admin.ModelAdmin):
 
 @admin.register(Equipamento)
 class EquipamentoAdmin(admin.ModelAdmin):
-    list_display = ['tipo_equipamento', 'quant_equipamente', 'protocolo', 'local_armazenamento']
+    list_display = ['tipo_equipamento', 'quant_equipamento', 'protocolo', 'local_armazenamento']
     list_filter = ['tipo_equipamento', 'local_armazenamento']
     search_fields = ['protocolo__numero_protocolo']
     raw_id_fields = ['protocolo', 'local_armazenamento']
