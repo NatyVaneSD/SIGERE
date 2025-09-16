@@ -46,12 +46,20 @@ jobs:
           echo "PGUSER=django_user" >> $GITHUB_ENV
           echo "PGPASSWORD=django_password" >> $GITHUB_ENV
           echo "PGDATABASE=django_db_test" >> $GITHUB_ENV
+          echo "SECRET_KEY=sua-chave-secreta-aqui" >> $GITHUB_ENV
+          echo "DEBUG=True" >> $GITHUB_ENV
 
       - name: Rodar Análise de Código com Pylint
-        run: pylint gerenciamento --fail-under=7.0
+        run: |
+          cd backend
+          pylint gerenciamento --fail-under=7.0
 
       - name: Rodar Migrações do Django
-        run: python manage.py migrate
+        run: |
+          cd backend
+          python manage.py migrate
 
       - name: Rodar Testes do Django
-        run: python manage.py test
+        run: |
+          cd backend
+          python manage.py test
