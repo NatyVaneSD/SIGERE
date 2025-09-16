@@ -1,3 +1,6 @@
+"""
+Modelos de dados para o sistema SIGERE.
+"""
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -47,66 +50,102 @@ DEPOSITO_CHOICES = [
 ]
 
 class UnidadeSolicitante(models.Model):
-    nome_UnidadeSolicitante = models.CharField(max_length=255, verbose_name="Nome da Unidade Solicitante")
+    """Modelo para representar as unidades solicitantes."""
+    nome_UnidadeSolicitante = models.CharField(
+        max_length=255, verbose_name="Nome da Unidade Solicitante")
     
     class Meta:
+        """Meta informações do modelo UnidadeSolicitante."""
         verbose_name = "Unidade Solicitante"
         verbose_name_plural = "Unidades Solicitantes"
         ordering = ['nome_UnidadeSolicitante']
 
     def __str__(self):
+        """Retorna o nome da unidade solicitante."""
         return self.nome_UnidadeSolicitante
 
 class Solicitante(models.Model):
-    nome_solicitante = models.CharField(max_length=255, verbose_name="Nome do Solicitante")
-    unidade_solicitante = models.ForeignKey(UnidadeSolicitante, on_delete=models.CASCADE, verbose_name="Unidade Solicitante")
+    """Modelo para representar os solicitantes."""
+    nome_solicitante = models.CharField(
+        max_length=255, verbose_name="Nome do Solicitante")
+    unidade_solicitante = models.ForeignKey(
+        UnidadeSolicitante, on_delete=models.CASCADE, 
+        verbose_name="Unidade Solicitante")
     
     class Meta:
+        """Meta informações do modelo Solicitante."""
         verbose_name = "Solicitante"
         verbose_name_plural = "Solicitantes"
         ordering = ['nome_solicitante']
 
     def __str__(self):
+        """Retorna o nome e a unidade do solicitante."""
         return f"{self.nome_solicitante} - {self.unidade_solicitante}"
 
 class TipoExame(models.Model):
-    nome_exame = models.CharField(max_length=225, verbose_name="Tipo de Exame", unique=True)
+    """Modelo para representar os tipos de exames."""
+    nome_exame = models.CharField(
+        max_length=225, verbose_name="Tipo de Exame", unique=True)
     
     class Meta:
+        """Meta informações do modelo TipoExame."""
         verbose_name = "Tipo de Exame"
         verbose_name_plural = "Tipos de Exame"
         ordering = ['nome_exame']
     
     def __str__(self):
+        """Retorna o nome do tipo de exame."""
         return self.nome_exame
 
 class Perito(models.Model):
-    nome = models.CharField(max_length=255, verbose_name="Nome do Perito", unique=True)
+    """Modelo para representar os peritos."""
+    nome = models.CharField(
+        max_length=255, verbose_name="Nome do Perito", unique=True)
     
     class Meta:
+        """Meta informações do modelo Perito."""
         verbose_name = "Perito"
         verbose_name_plural = "Peritos"
         ordering = ['nome']
     
     def __str__(self):
+        """Retorna o nome do perito."""
         return self.nome
 
 class Requisicao(models.Model):
-    tipo_documento = models.CharField(max_length=4, choices=TIPO_DOCUMENTO_CHOICES, verbose_name="Tipo de Documento")
-    numero_documento = models.CharField(max_length=20, verbose_name="Número do Documento")
-    numero_caso = models.CharField(max_length=20, unique=True, verbose_name="Número do Caso")
+    """Modelo para representar uma requisição de exame."""
+    tipo_documento = models.CharField(
+        max_length=4, choices=TIPO_DOCUMENTO_CHOICES, 
+        verbose_name="Tipo de Documento")
+    numero_documento = models.CharField(
+        max_length=20, verbose_name="Número do Documento")
+    numero_caso = models.CharField(
+        max_length=20, unique=True, verbose_name="Número do Caso")
     data_requisicao = models.DateField(verbose_name="Data da Requisição")
     data_recebimento = models.DateField(verbose_name="Data de Recebimento")
     objetivo_pericia = models.TextField(verbose_name="Objetivo da Perícia")
-    status_requisicao = models.CharField(max_length=20, choices=STATUS_CHOICES, verbose_name="Status da Requisição")
-    peso_requisicao = models.CharField(max_length=2, choices=PESO_CHOICES, verbose_name="Peso da Requisição")
-    pae_requisicao = models.CharField(max_length=25, blank=True, null=True, verbose_name="PAE da Requisição")
-    solicitante = models.ForeignKey(Solicitante, on_delete=models.SET_NULL, null=True, verbose_name="Solicitante")
-    tipo_exame = models.ForeignKey(TipoExame, on_delete=models.SET_NULL, null=True, verbose_name="Tipo de Exame")
-    data_criacao = models.DateTimeField(auto_now_add=True, verbose_name="Data de Criação")
-    data_atualizacao = models.DateTimeField(auto_now=True, verbose_name="Data de Atualização")
+    status_requisicao = models.CharField(
+        max_length=20, choices=STATUS_CHOICES, 
+        verbose_name="Status da Requisição")
+    peso_requisicao = models.CharField(
+        max_length=2, choices=PESO_CHOICES, 
+        verbose_name="Peso da Requisição")
+    pae_requisicao = models.CharField(
+        max_length=25, blank=True, null=True, 
+        verbose_name="PAE da Requisição")
+    solicitante = models.ForeignKey(
+        Solicitante, on_delete=models.SET_NULL, null=True, 
+        verbose_name="Solicitante")
+    tipo_exame = models.ForeignKey(
+        TipoExame, on_delete=models.SET_NULL, null=True, 
+        verbose_name="Tipo de Exame")
+    data_criacao = models.DateTimeField(
+        auto_now_add=True, verbose_name="Data de Criação")
+    data_atualizacao = models.DateTimeField(
+        auto_now=True, verbose_name="Data de Atualização")
     
     class Meta:
+        """Meta informações do modelo Requisicao."""
         verbose_name = "Requisição"
         verbose_name_plural = "Requisições"
         ordering = ['-data_criacao']
@@ -117,16 +156,25 @@ class Requisicao(models.Model):
         ]
 
     def __str__(self):
+        """Retorna o número do caso e o status da requisição."""
         return f"REQ-{self.numero_caso} - {self.get_status_requisicao_display()}"
 
 class Protocolo(models.Model):
-    numero_protocolo = models.CharField(max_length=50, unique=True, verbose_name="Número do Protocolo")
-    data_entrega_perito = models.DateField(verbose_name="Data de Entrega ao Perito", null=True, blank=True)  # Tornar opcional
-    perito = models.ForeignKey(Perito, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Perito")  # Tornar opcional
-    requisicao = models.ForeignKey(Requisicao, on_delete=models.CASCADE, verbose_name="Requisição")
-    data_criacao = models.DateTimeField(auto_now_add=True, verbose_name="Data de Criação")
+    """Modelo para representar um protocolo de entrada de requisição."""
+    numero_protocolo = models.CharField(
+        max_length=50, unique=True, verbose_name="Número do Protocolo")
+    data_entrega_perito = models.DateField(
+        verbose_name="Data de Entrega ao Perito", null=True, blank=True)
+    perito = models.ForeignKey(
+        Perito, on_delete=models.SET_NULL, null=True, blank=True, 
+        verbose_name="Perito")
+    requisicao = models.ForeignKey(
+        Requisicao, on_delete=models.CASCADE, verbose_name="Requisição")
+    data_criacao = models.DateTimeField(
+        auto_now_add=True, verbose_name="Data de Criação")
     
     class Meta:
+        """Meta informações do modelo Protocolo."""
         verbose_name = "Protocolo"
         verbose_name_plural = "Protocolos"
         ordering = ['-data_criacao']
@@ -135,61 +183,94 @@ class Protocolo(models.Model):
         ]
 
     def __str__(self):
+        """Retorna o número do protocolo."""
         return self.numero_protocolo
 
 class TipoEquipamento(models.Model):
-    tipo = models.CharField(max_length=50, choices=EQUIPAMENTO_CHOICES, verbose_name="Tipo de Equipamento")
-    outros_tipo = models.CharField(max_length=50, blank=True, null=True, verbose_name="Outro Tipo (se necessário)")
+    """Modelo para representar os tipos de equipamentos."""
+    tipo = models.CharField(
+        max_length=50, choices=EQUIPAMENTO_CHOICES, 
+        verbose_name="Tipo de Equipamento")
+    outros_tipo = models.CharField(
+        max_length=50, blank=True, null=True, 
+        verbose_name="Outro Tipo (se necessário)")
     
     class Meta:
+        """Meta informações do modelo TipoEquipamento."""
         verbose_name = "Tipo de Equipamento"
         verbose_name_plural = "Tipos de Equipamento"
         ordering = ['tipo']
 
     def __str__(self):
+        """Retorna o nome do tipo de equipamento."""
         if self.tipo == "OUTROS" and self.outros_tipo:
             return self.outros_tipo
         return self.get_tipo_display()
 
 class Armazenamento(models.Model):
-    deposito = models.CharField(max_length=50, choices=DEPOSITO_CHOICES, verbose_name="Depósito")
-    prateleira = models.CharField(max_length=50, verbose_name="Prateleira")
+    """Modelo para representar o local de armazenamento dos equipamentos."""
+    deposito = models.CharField(
+        max_length=50, choices=DEPOSITO_CHOICES, verbose_name="Depósito")
+    prateleira = models.CharField(
+        max_length=50, verbose_name="Prateleira")
     
     class Meta:
+        """Meta informações do modelo Armazenamento."""
         verbose_name = "Armazenamento"
         verbose_name_plural = "Armazenamentos"
         unique_together = ['deposito', 'prateleira']
         ordering = ['deposito', 'prateleira']
 
     def __str__(self):
+        """Retorna o local de armazenamento."""
         return f"{self.get_deposito_display()} - Prateleira {self.prateleira}"
 
 class Equipamento(models.Model):
-    tipo_equipamento = models.ForeignKey(TipoEquipamento, on_delete=models.CASCADE, verbose_name="Tipo de Equipamento")
-    quant_equipamento = models.PositiveSmallIntegerField(verbose_name="Quantidade de Equipamentos")
-    local_armazenamento = models.ForeignKey(Armazenamento, on_delete=models.SET_NULL, null=True, verbose_name="Local de Armazenamento")
-    protocolo = models.ForeignKey(Protocolo, on_delete=models.CASCADE, verbose_name="Protocolo")
-    data_cadastro = models.DateTimeField(auto_now_add=True, verbose_name="Data de Cadastro")
+    """Modelo para representar um equipamento recebido em um protocolo."""
+    tipo_equipamento = models.ForeignKey(
+        TipoEquipamento, on_delete=models.CASCADE, 
+        verbose_name="Tipo de Equipamento")
+    quant_equipamento = models.PositiveSmallIntegerField(
+        verbose_name="Quantidade de Equipamentos")
+    local_armazenamento = models.ForeignKey(
+        Armazenamento, on_delete=models.SET_NULL, null=True, 
+        verbose_name="Local de Armazenamento")
+    protocolo = models.ForeignKey(
+        Protocolo, on_delete=models.CASCADE, verbose_name="Protocolo")
+    data_cadastro = models.DateTimeField(
+        auto_now_add=True, verbose_name="Data de Cadastro")
     
     class Meta:
+        """Meta informações do modelo Equipamento."""
         verbose_name = "Equipamento"
         verbose_name_plural = "Equipamentos"
         ordering = ['-data_cadastro']
 
     def __str__(self):
-        return f"{self.tipo_equipamento} - Protocolo: {self.protocolo.numero_protocolo}"
+        """Retorna o tipo de equipamento e o protocolo associado."""
+        return (f"{self.tipo_equipamento} - Protocolo: "
+                f"{self.protocolo.numero_protocolo}")
 
 class Laudo(models.Model):
-    numero_laudo = models.CharField(max_length=100, unique=True, verbose_name="Número do Laudo")
-    data_entrega_expedicao = models.DateField(verbose_name="Data de Entrega na Expedição")
-    data_entrega_custodia = models.DateField(verbose_name="Data de Entrega na Custódia")
-    anexo_digital = models.BooleanField(default=True, verbose_name="Anexo Digital")
+    """Modelo para representar um laudo pericial."""
+    numero_laudo = models.CharField(
+        max_length=100, unique=True, verbose_name="Número do Laudo")
+    data_entrega_expedicao = models.DateField(
+        verbose_name="Data de Entrega na Expedição")
+    data_entrega_custodia = models.DateField(
+        verbose_name="Data de Entrega na Custódia")
+    anexo_digital = models.BooleanField(
+        default=True, verbose_name="Anexo Digital")
     peritos = models.ManyToManyField(Perito, verbose_name="Peritos")
     equipamentos = models.ManyToManyField(Equipamento, verbose_name="Equipamentos")
-    protocolo = models.ForeignKey(Protocolo, on_delete=models.SET_NULL, null=True, verbose_name="Protocolo")
-    data_criacao = models.DateTimeField(auto_now_add=True, verbose_name="Data de Criação")
+    protocolo = models.ForeignKey(
+        Protocolo, on_delete=models.SET_NULL, null=True, 
+        verbose_name="Protocolo")
+    data_criacao = models.DateTimeField(
+        auto_now_add=True, verbose_name="Data de Criação")
     
     class Meta:
+        """Meta informações do modelo Laudo."""
         verbose_name = "Laudo"
         verbose_name_plural = "Laudos"
         ordering = ['-data_criacao']
@@ -198,22 +279,30 @@ class Laudo(models.Model):
         ]
 
     def __str__(self):
+        """Retorna o número do laudo."""
         return self.numero_laudo
 
 class Auditoria(models.Model):
+    """Modelo para registrar as ações de auditoria no banco de dados."""
     ACAO_CHOICES = [
         ('INSERT', 'Inserção'),
         ('UPDATE', 'Atualização'),
         ('DELETE', 'Exclusão'),
     ]
     
-    tabela_afetada = models.CharField(max_length=255, verbose_name="Tabela Afetada")
-    id_registro = models.IntegerField(verbose_name="ID do Registro")
-    acao = models.CharField(max_length=10, choices=ACAO_CHOICES, verbose_name="Ação")
-    dados_antigos = models.JSONField(blank=True, null=True, verbose_name="Dados Antigos")
-    data_hora = models.DateTimeField(auto_now_add=True, verbose_name="Data e Hora")
-   
+    tabela_afetada = models.CharField(
+        max_length=255, verbose_name="Tabela Afetada")
+    id_registro = models.IntegerField(
+        verbose_name="ID do Registro")
+    acao = models.CharField(
+        max_length=10, choices=ACAO_CHOICES, verbose_name="Ação")
+    dados_antigos = models.JSONField(
+        blank=True, null=True, verbose_name="Dados Antigos")
+    data_hora = models.DateTimeField(
+        auto_now_add=True, verbose_name="Data e Hora")
+    
     class Meta:
+        """Meta informações do modelo Auditoria."""
         verbose_name = "Auditoria"
         verbose_name_plural = "Auditorias"
         ordering = ['-data_hora']
@@ -223,4 +312,6 @@ class Auditoria(models.Model):
         ]
 
     def __str__(self):
-        return f"Auditoria - {self.tabela_afetada} - {self.acao} - {self.data_hora}"
+        """Retorna uma representação da auditoria."""
+        return (f"Auditoria - {self.tabela_afetada} - "
+                f"{self.acao} - {self.data_hora}")
