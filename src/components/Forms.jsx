@@ -145,7 +145,7 @@ export default function Forms() {
             <Form.Group>
               <Form.Label>Status:</Form.Label>
               <Form.Select aria-label="Status" defaultValue="pendente">
-                <option value="pendente">Pendente</option>
+                <option value="pendente">Em espera</option> #igualar ao banco
                 <option value="1">Em andamento</option>
                 <option value="2">Finalizado</option>
                 <option value="3">Cancelado</option>
@@ -188,7 +188,7 @@ export default function Forms() {
         {/* Este botão deve estar fora do formulário se ele enviar algo diferente */}
         {/* Se "Cadastrar Requisição" envia todos os dados, ele pode ficar aqui */}
         {/* Se ele envia apenas os dados de requisição, você pode mantê-lo fora */}
-        <div className="d-flex justify-content-end mb-3">
+        <div className="d-flex justify-content-center mb-3">
           <Button className="mb-3 w-25" variant="primary">
             Cadastrar Requisição
           </Button>

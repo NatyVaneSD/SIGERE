@@ -1,6 +1,5 @@
 import React from "react";
 import { Container, Row, Col, Form, Button } from "react-bootstrap";
-
 const MaterialForm = ({
   material,
   index,
@@ -9,17 +8,21 @@ const MaterialForm = ({
 }) => {
   return (
     <Container className="p-0 mb-4">
-      <Row className="mb-4 d-flex justify-content-between align-items-center">
-        <h4>Cadastrar Material {index + 1}</h4>
-        {index > 0 && (
-          <Button
-            variant="outline-danger"
-            onClick={() => handleRemoveMaterial(index)}
-          >
-            Remover
-          </Button>
-        )}
-      </Row>
+      <Row className="mb-4">
+        {/* A div abaixo vai garantir que o título e o botão fiquem na mesma linha */}
+        <div className="d-flex justify-content-between align-items-center">
+          <h4>Cadastrar Material {index + 1}</h4>
+          {index > 0 && (
+            <Button
+              variant="outline-danger"
+              size="sm" // O 'size="sm"' deixa o botão menor e mais adequado
+              onClick={() => handleRemoveMaterial(index)}
+            >
+              Remover
+            </Button>
+          )}
+        </div>
+      </Row> 
       <Form>
         <Row className="mb-3">
           <Col className="me-4">
