@@ -1,5 +1,5 @@
-# backend/requisicoes/models.py
 from django.db import models
+from django.contrib.auth.models import AbstractUser
 
 class Requisicao(models.Model):
     # Campos do formulário de Requisição
@@ -32,3 +32,22 @@ class Material(models.Model):
 
     def __str__(self):
         return f"{self.tipo_equipamento} (Requisição: {self.requisicao.numero_requisicao})"
+
+class User(AbstractUser):
+    """
+    Modelo de utilizador personalizado para a aplicação.
+    Inclui um campo de categoria para definir os níveis de acesso.
+    """
+    CATEGORIA_CHOICES = (
+        ('estagiário', 'Estagiário'),
+        ('administrativo', 'Administrativo'),
+        ('gerente', 'Gerente'),
+    )
+    categoria = models.CharField(max_length=20, choices=CATEGORIA_CHOICES, default='estagiário')
+
+    class Meta:
+        verbose_name = "Usuário"
+        verbose_name_plural = "Usuários"
+
+    def __str__(self):
+        return self.username
