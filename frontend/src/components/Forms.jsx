@@ -1,11 +1,10 @@
-// frontend/src/components/Forms.jsx
-
 import { useState } from "react";
 import { Form, Row, Col, Button, Container } from "react-bootstrap";
 import "../App.css";
 import MaterialForm from "./MaterialForm";
 
-export default function Forms() {
+
+export default function Forms({ userCategory }) {
   // 1. ADICIONADO: Estado para guardar os dados do formulário de Requisição
   const [requisicaoData, setRequisicaoData] = useState({
     tipo_documento: "",
