@@ -17,7 +17,7 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: '3.9'
-
+          
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
@@ -25,8 +25,8 @@ jobs:
 
       - name: Run migrations
         run: |
-          python manage.py migrate
+          python backend/manage.py migrate
 
       - name: Run tests
         run: |
-          python manage.py test requisicoes
+          python backend/manage.py test requisicoes
