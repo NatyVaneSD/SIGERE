@@ -26,14 +26,14 @@ eliminando os problemas atuais.
 ## Tecnologias Utilizadas
 
 - **Linguagens de Programação:** Python, JavaScript  
-- **Frameworks e Bibliotecas:** Django (ou Flask), React.js  
-- **Banco de Dados:** PostgreSQL (ou MySQL)  
+- **Frameworks e Bibliotecas:** Django, React.js  
+- **Banco de Dados:** SQLite
 - **Ferramentas:**  
   - Controle de Versão: Git + GitHub  
-  - Testes de API: Postman (ou Insomnia)  
+  - Testes de API: Postman 
   - Gerenciamento de Dependências: Pip + Poetry  
   - Integração Contínua / Entrega Contínua (CI/CD): GitHub Actions  
-  - Qualidade de Código: SonarQube, Pylint  
+  - Qualidade de Código:Pylint  
 
 ## Instalação e Execução
 
@@ -49,13 +49,12 @@ eliminando os problemas atuais.
 
     Antes de instalar e executar o SIGERE, certifique-se de que seu ambiente atende aos seguintes requisitos mínimos:
 
-    - **Python**: Versão 3.8 ou superior  
+    - **Python**: Versão 3.10 ou superior  
     [Download e instruções](https://www.python.org/downloads/)
 
     - **Node.js**: Versão 14 ou superior (inclui npm)  
     [Download e instruções](https://nodejs.org/)
 
-    - **Banco de Dados**: PostgreSQL 12+ ou MySQL 8+ instalado e configurado
 
     - **Gerenciador de Dependências Python**: Poetry (recomendado) ou pip  
 
@@ -69,23 +68,31 @@ eliminando os problemas atuais.
 
     ```bash
     cd backend
-    poetry install
+    pip install -r requirements.txt
 
-4. Configure o banco de dados PostgreSQL/MySQL conforme o arquivo .env.example e crie as migrations:
+4. Configure o banco de dados SQLite conforme o arquivo .env.example e crie as migrations:
 
     ```bash 
     poetry run python manage.py migrate
 
-5. Instale as dependências do frontend:
+5. Inicie o servidor backend:
+
+    ```bash 
+    python manage.py runserver
+
+6. Crie outro terminal e instale as dependências do frontend:
 
     ```bash
     cd ../frontend
     npm install
 
-6. Inicie o servidor frontend:
+7. Inicie o servidor frontend:
 
     ```bash 
      npm run dev
+
+8. Inserir as credenciais: admin e Nat#22194.
+
 
 ## Funcionalidades 
 
