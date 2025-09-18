@@ -3,46 +3,45 @@ import { Form, Row, Col, Button, Container } from "react-bootstrap";
 import "../App.css";
 import MaterialForm from "./MaterialForm";
 
-
 const applyMask = (value, maskType) => {
-  const digits = value.replace(/\D/g, ""); 
+  const digits = value.replace(/\D/g, "");
 
   switch (maskType) {
-    case "requisicao": 
+    case "requisicao":
       return digits
         .slice(0, 10)
         .replace(/(\d{4})(\d)/, "$1.$2")
         .replace(/(\d{4}\.\d{4})(\d)/, "$1-$2");
-    
-    case "protocolo": 
+
+    case "protocolo":
       return digits
         .slice(0, 12)
         .replace(/(\d{4})(\d)/, "$1.$2")
         .replace(/(\d{4}\.\d{2})(\d)/, "$1.$2");
 
-    case "caso": 
+    case "caso":
       return digits
         .slice(0, 10)
         .replace(/(\d{4})(\d)/, "$1.$2");
 
-    case "oficio": 
+    case "oficio":
       return digits
         .slice(0, 9)
         .replace(/(\d{5})(\d)/, "$1/$2");
 
-    case "bo": 
+    case "bo":
       return digits
         .slice(0, 12)
         .replace(/(\d{5})(\d)/, "$1.$2")
         .replace(/(\d{5}\.\d{5})(\d)/, "$1-$2");
-    
-    case "ipl": 
+
+    case "ipl":
       return digits
-        .slice(0, 12)
+        .slice(0, 0)
         .replace(/(\d{4})(\d)/, "$1.$2")
         .replace(/(\d{4}\.\d{3})(\d)/, "$1.$2")
         .replace(/(\d{4}\.\d{3}\.\d{3})(\d)/, "$1-$2");
-        
+
     default:
       return value;
   }
@@ -64,10 +63,8 @@ export default function Forms({ userCategory }) {
     status: "Pendente",
   });
 
-
   const handleRequisicaoChange = (e) => {
     let { name, value } = e.target;
-
 
     switch (name) {
       case "numero_requisicao":
@@ -87,15 +84,13 @@ export default function Forms({ userCategory }) {
         break;
       }
     }
-    
 
     if (name === "tipo_documento") {
-        setRequisicaoData((prev) => ({ ...prev, numero_documento: "", [name]: value }));
+      setRequisicaoData((prev) => ({ ...prev, numero_documento: "", [name]: value }));
     } else {
-        setRequisicaoData((prev) => ({ ...prev, [name]: value }));
+      setRequisicaoData((prev) => ({ ...prev, [name]: value }));
     }
   };
-
 
   const initialMaterial = {
     tipoEquipamento: "",
@@ -124,9 +119,14 @@ export default function Forms({ userCategory }) {
     setMateriais(newMateriais);
   };
 
-
   const handleSubmit = (event) => {
     event.preventDefault();
+
+    const token = localStorage.getItem('accessToken');
+    if (!token) {
+      alert("Erro: Você não está logado. Por favor, faça o login novamente.");
+      return;
+    }
 
     const cleanRequisicaoData = {
       ...requisicaoData,
@@ -137,11 +137,11 @@ export default function Forms({ userCategory }) {
     };
 
     const materiaisParaEnviar = materiais.map(mat => ({
-        tipo_equipamento: mat.tipoEquipamento,
-        outros_tipo_equipamento: mat.outrosTipoEquipamento,
-        quantidade: mat.quantidade,
-        local_armazenamento: mat.localArmazenamento,
-        prateleira: mat.prateleira
+      tipo_equipamento: mat.tipoEquipamento,
+      outros_tipo_equipamento: mat.outrosTipoEquipamento,
+      quantidade: mat.quantidade,
+      local_armazenamento: mat.localArmazenamento,
+      prateleira: mat.prateleira
     }));
 
     const finalPayload = {
@@ -153,10 +153,18 @@ export default function Forms({ userCategory }) {
 
     fetch("http://localhost:8000/api/requisicoes/", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}` // A linha-chave para autenticação
+      },
       body: JSON.stringify(finalPayload),
     })
-      .then(response => response.ok ? response.json() : response.json().then(err => Promise.reject(err)))
+      .then(response => {
+        if (!response.ok) {
+          return response.json().then(err => Promise.reject(err));
+        }
+        return response.json();
+      })
       .then(data => {
         console.log("Sucesso:", data);
         alert("Requisição cadastrada com sucesso!");
@@ -280,7 +288,7 @@ export default function Forms({ userCategory }) {
           </Col>
         </Row>
 
-        <hr className="my-4"/>
+        <hr className="my-4" />
 
         {materiais.map((material, index) => (
           <MaterialForm
@@ -291,7 +299,7 @@ export default function Forms({ userCategory }) {
             handleRemoveMaterial={handleRemoveMaterial}
           />
         ))}
-        
+
         <Container className="p-0">
           <Row>
             <div className="d-flex justify-content-start mb-3 gap-2">
