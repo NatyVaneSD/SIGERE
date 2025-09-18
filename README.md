@@ -1,2 +1,123 @@
-# SIGERE
-Projeto em desenvolvimento para a disciplina de Engenharia de Software II
+## SIGERE – Sistema Integrado de Gerenciamento de Requisições 
+Atualmente, a Gerência de Perícia em Informática (GPI) utiliza planilhas do 
+Excel para controlar requisições de perícia em dispositivos eletrônicos. Essa abordagem 
+manual apresenta diversos desafios, como risco de perda de dados, dificuldade de 
+acesso simultâneo por múltiplos usuários, falta de rastreabilidade de alterações e 
+processos demorados para gerar relatórios. 
+O SIGERE surge como solução para automatizar todo o ciclo de vida das requisições, 
+desde o cadastro até a geração de relatórios. O sistema garantirá maior segurança, 
+eficiência e transparência nos processos, substituindo definitivamente as planilhas e 
+eliminando os problemas atuais.
+
+## Desenvolvedores
+
+2023006804 – Natalia Macedo - (Scrum Master)
+
+2023007276 – Cynthia Pantoja de Melo Neiva - (Desenvolverdor Frontend)
+
+2023007169 – Luiz Reis Ferreira Neto - (Desenvolverdor Frontend)
+
+2023006690 – Vinicius Yoshimitsu Aoki Alves - (Desenvolverdor Full-Stack)
+
+2023007338 – Rafael Tavares Negrão Braga - (Desenvolverdor Frontend)
+
+2023007211 – Iuri Oliveira Matos da Silva - (Desenvolverdor Full-Stack)
+
+## Tecnologias Utilizadas
+
+- **Linguagens de Programação:** Python, JavaScript  
+- **Frameworks e Bibliotecas:** Django (ou Flask), React.js  
+- **Banco de Dados:** PostgreSQL (ou MySQL)  
+- **Ferramentas:**  
+  - Controle de Versão: Git + GitHub  
+  - Testes de API: Postman (ou Insomnia)  
+  - Gerenciamento de Dependências: Pip + Poetry  
+  - Integração Contínua / Entrega Contínua (CI/CD): GitHub Actions  
+  - Qualidade de Código: SonarQube, Pylint  
+
+## Instalação e Execução
+
+### Passos para rodar o projeto localmente:
+
+1. Clone o repositório:  
+
+   ```bash
+   git clone https://github.com/seu-usuario/sigere.git
+   cd sigere
+
+2. Requisitos para as Dependências do Projeto
+
+    Antes de instalar e executar o SIGERE, certifique-se de que seu ambiente atende aos seguintes requisitos mínimos:
+
+    - **Python**: Versão 3.8 ou superior  
+    [Download e instruções](https://www.python.org/downloads/)
+
+    - **Node.js**: Versão 14 ou superior (inclui npm)  
+    [Download e instruções](https://nodejs.org/)
+
+    - **Banco de Dados**: PostgreSQL 12+ ou MySQL 8+ instalado e configurado
+
+    - **Gerenciador de Dependências Python**: Poetry (recomendado) ou pip  
+
+    - **Git:** Para controle de versão e clonagem do repositório
+        
+        [Download e instruções](https://git-scm.com/)
+    
+    Certifique-se de que todas as ferramentas estejam corretamente instaladas e configuradas no PATH do seu sistema para evitar problemas durante a instalação e execução do projeto.
+
+3. Instale as dependências do backend:
+
+    ```bash
+    cd backend
+    poetry install
+
+4. Configure o banco de dados PostgreSQL/MySQL conforme o arquivo .env.example e crie as migrations:
+
+    ```bash 
+    poetry run python manage.py migrate
+
+5. Instale as dependências do frontend:
+
+    ```bash
+    cd ../frontend
+    npm install
+
+6. Inicie o servidor frontend:
+
+    ```bash 
+     npm run dev
+
+## Funcionalidades 
+
+    ✅ Página de Login
+
+    ✅ Cadastro de Requisição
+
+## Arquitetura / Organização do Projeto
+
+    ```bash
+    SIGERE/
+    ├── backend/                   # Aplicação backend (Django)
+    │   ├── admin/migrations/      # Migrações do módulo admin
+    │   ├── auth/migrations/       # Migrações do módulo de autenticação
+    │   ├── backend_config/        # Configurações principais do backend (Django settings)
+    │   ├── contenttypes/migrations/ # Migrações do módulo contenttypes
+    │   ├── requisicoes/             # App de requisições
+    │   ├── sessions/migrations/   # Migrações do módulo de sessões
+    │   ├── venv/                  # Ambiente virtual Python
+    │   ├── db.sqlite3             # Banco de dados SQLite (desenvolvimento)
+    │   └── manage.py              # Gerenciador Django
+    │
+    ├── frontend/                 # Aplicação frontend (React + Vite)
+    │   ├── public/                # Arquivos públicos (index.html base, imagens, favicon)
+    │   └── src/                   # Código-fonte do frontend
+    │
+    ├── .gitignore                 # Arquivos/pastas ignorados pelo Git
+    ├── README.md                  # Documentação do projeto
+    ├── eslint.config.js           # Configuração do ESLint
+    ├── index.html                 # HTML inicial do Vite
+    ├── package-lock.json          # Dependências lock do npm
+    ├── package.json               # Dependências e scripts do frontend
+    ├── postcss.config.js          # Configuração do PostCSS
+    ├── tailwind.config.js         # Configuração do Tailwind CSS
+    └── vite.config.js             # Configuração do Vite
