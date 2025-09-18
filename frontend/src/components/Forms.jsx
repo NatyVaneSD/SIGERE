@@ -4,8 +4,51 @@ import "../App.css";
 import MaterialForm from "./MaterialForm";
 
 
+const applyMask = (value, maskType) => {
+  const digits = value.replace(/\D/g, ""); 
+
+  switch (maskType) {
+    case "requisicao": 
+      return digits
+        .slice(0, 10)
+        .replace(/(\d{4})(\d)/, "$1.$2")
+        .replace(/(\d{4}\.\d{4})(\d)/, "$1-$2");
+    
+    case "protocolo": 
+      return digits
+        .slice(0, 12)
+        .replace(/(\d{4})(\d)/, "$1.$2")
+        .replace(/(\d{4}\.\d{2})(\d)/, "$1.$2");
+
+    case "caso": 
+      return digits
+        .slice(0, 10)
+        .replace(/(\d{4})(\d)/, "$1.$2");
+
+    case "oficio": 
+      return digits
+        .slice(0, 9)
+        .replace(/(\d{5})(\d)/, "$1/$2");
+
+    case "bo": 
+      return digits
+        .slice(0, 12)
+        .replace(/(\d{5})(\d)/, "$1.$2")
+        .replace(/(\d{5}\.\d{5})(\d)/, "$1-$2");
+    
+    case "ipl": 
+      return digits
+        .slice(0, 12)
+        .replace(/(\d{4})(\d)/, "$1.$2")
+        .replace(/(\d{4}\.\d{3})(\d)/, "$1.$2")
+        .replace(/(\d{4}\.\d{3}\.\d{3})(\d)/, "$1-$2");
+        
+    default:
+      return value;
+  }
+};
+
 export default function Forms({ userCategory }) {
-  // 1. ADICIONADO: Estado para guardar os dados do formulário de Requisição
   const [requisicaoData, setRequisicaoData] = useState({
     tipo_documento: "",
     numero_documento: "",
@@ -21,13 +64,39 @@ export default function Forms({ userCategory }) {
     status: "Pendente",
   });
 
-  // 2. ADICIONADO: Handler para atualizar o estado da requisição
+
   const handleRequisicaoChange = (e) => {
-    const { name, value } = e.target;
-    setRequisicaoData((prev) => ({ ...prev, [name]: value }));
+    let { name, value } = e.target;
+
+
+    switch (name) {
+      case "numero_requisicao":
+        value = applyMask(value, "requisicao");
+        break;
+      case "numero_protocolo":
+        value = applyMask(value, "protocolo");
+        break;
+      case "numero_caso":
+        value = applyMask(value, "caso");
+        break;
+      case "numero_documento": {
+        const docType = requisicaoData.tipo_documento;
+        if (docType === "Ofício") value = applyMask(value, "oficio");
+        else if (docType === "BO") value = applyMask(value, "bo");
+        else if (docType === "IPL") value = applyMask(value, "ipl");
+        break;
+      }
+    }
+    
+
+    if (name === "tipo_documento") {
+        setRequisicaoData((prev) => ({ ...prev, numero_documento: "", [name]: value }));
+    } else {
+        setRequisicaoData((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
-  // --- Funções e estado para os múltiplos formulários de material (SEU CÓDIGO ORIGINAL) ---
+
   const initialMaterial = {
     tipoEquipamento: "",
     outrosTipoEquipamento: "",
@@ -55,11 +124,18 @@ export default function Forms({ userCategory }) {
     setMateriais(newMateriais);
   };
 
-  // 3. ADICIONADO: Lógica de envio para o backend
+
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    // Converte as chaves de camelCase (JavaScript) para snake_case (Python/Django)
+    const cleanRequisicaoData = {
+      ...requisicaoData,
+      numero_requisicao: requisicaoData.numero_requisicao.replace(/\D/g, ''),
+      numero_protocolo: requisicaoData.numero_protocolo.replace(/\D/g, ''),
+      numero_documento: requisicaoData.numero_documento.replace(/\D/g, ''),
+      numero_caso: requisicaoData.numero_caso.replace(/\D/g, ''),
+    };
+
     const materiaisParaEnviar = materiais.map(mat => ({
         tipo_equipamento: mat.tipoEquipamento,
         outros_tipo_equipamento: mat.outrosTipoEquipamento,
@@ -69,7 +145,7 @@ export default function Forms({ userCategory }) {
     }));
 
     const finalPayload = {
-      ...requisicaoData,
+      ...cleanRequisicaoData,
       materiais: materiaisParaEnviar,
     };
 
@@ -84,7 +160,6 @@ export default function Forms({ userCategory }) {
       .then(data => {
         console.log("Sucesso:", data);
         alert("Requisição cadastrada com sucesso!");
-        // Limpa formulários
         setRequisicaoData({ tipo_documento: "", numero_documento: "", numero_requisicao: "", data_requisicao: "", solicitante: "", unidade_solicitante: "", tipo_exame: "", data_recebimento: "", numero_protocolo: "", numero_caso: "", nivel_prioridade: "", status: "Pendente" });
         setMateriais([initialMaterial]);
       })
@@ -100,9 +175,7 @@ export default function Forms({ userCategory }) {
       <Row className="mb-3">
         <h4>Cadastrar Requisição</h4>
       </Row>
-      {/* 4. ADICIONADO: onSubmit no <Form> para ativar a função handleSubmit */}
       <Form onSubmit={handleSubmit}>
-        {/* 5. ADICIONADO: name, value e onChange em todos os campos */}
         <Row className="mb-3">
           <Col className="me-4">
             <Form.Group>
@@ -118,16 +191,15 @@ export default function Forms({ userCategory }) {
           <Col>
             <Form.Group>
               <Form.Label>Nº do documento:</Form.Label>
-              <Form.Control name="numero_documento" value={requisicaoData.numero_documento} onChange={handleRequisicaoChange} type="text" placeholder="Inserir" required />
+              <Form.Control name="numero_documento" value={requisicaoData.numero_documento} onChange={handleRequisicaoChange} type="text" placeholder="Selecione o tipo primeiro" required />
             </Form.Group>
           </Col>
         </Row>
-        
         <Row className="mb-3">
           <Col className="me-4">
             <Form.Group>
               <Form.Label>Nº da Requisição:</Form.Label>
-              <Form.Control name="numero_requisicao" value={requisicaoData.numero_requisicao} onChange={handleRequisicaoChange} type="text" placeholder="Inserir" required />
+              <Form.Control name="numero_requisicao" value={requisicaoData.numero_requisicao} onChange={handleRequisicaoChange} type="text" placeholder="NNNN.NNNN-NN" maxLength="12" required />
             </Form.Group>
           </Col>
           <Col>
@@ -137,7 +209,6 @@ export default function Forms({ userCategory }) {
             </Form.Group>
           </Col>
         </Row>
-        
         <Row className="mb-3">
           <Col className="me-4">
             <Form.Group>
@@ -152,7 +223,6 @@ export default function Forms({ userCategory }) {
             </Form.Group>
           </Col>
         </Row>
-        
         <Row className="mb-3">
           <Col className="me-4">
             <Form.Group>
@@ -171,22 +241,20 @@ export default function Forms({ userCategory }) {
             </Form.Group>
           </Col>
         </Row>
-        
         <Row className="mb-3">
           <Col className="me-4">
             <Form.Group>
               <Form.Label>Nº do protocolo:</Form.Label>
-              <Form.Control name="numero_protocolo" value={requisicaoData.numero_protocolo} onChange={handleRequisicaoChange} type="text" placeholder="Inserir" />
+              <Form.Control name="numero_protocolo" value={requisicaoData.numero_protocolo} onChange={handleRequisicaoChange} type="text" placeholder="NNNN.NN.NNNNNN" maxLength="15" />
             </Form.Group>
           </Col>
           <Col>
             <Form.Group>
               <Form.Label>Nº do caso:</Form.Label>
-              <Form.Control name="numero_caso" value={requisicaoData.numero_caso} onChange={handleRequisicaoChange} type="text" placeholder="Inserir" />
+              <Form.Control name="numero_caso" value={requisicaoData.numero_caso} onChange={handleRequisicaoChange} type="text" placeholder="NNNN.NNNNNN" maxLength="11" />
             </Form.Group>
           </Col>
         </Row>
-        
         <Row className="mb-4">
           <Col className="me-4">
             <Form.Group>
@@ -234,7 +302,6 @@ export default function Forms({ userCategory }) {
           </Row>
         </Container>
         <div className="d-flex justify-content-end mb-3">
-          {/* 6. ADICIONADO: type="submit" para acionar o onSubmit do formulário */}
           <Button type="submit" className="mb-3 w-25" variant="primary">
             Cadastrar Requisição
           </Button>

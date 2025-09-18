@@ -9,18 +9,24 @@ const MaterialForm = ({
 }) => {
   return (
     <Container className="p-0 mb-4">
-      <Row className="mb-4 d-flex justify-content-between align-items-center">
-        <h4>Cadastrar Material {index + 1}</h4>
+      {}
+      <Row className="mb-4 align-items-center">
+        <Col>
+          <h4>Cadastrar Material {index + 1}</h4>
+        </Col>
         {index > 0 && (
-          <Button
-            variant="outline-danger"
-            onClick={() => handleRemoveMaterial(index)}
-          >
-            Remover
-          </Button>
+          <Col xs="auto" className="ms-auto">
+            <Button
+              variant="danger"
+              onClick={() => handleRemoveMaterial(index)}
+            >
+              Remover
+            </Button>
+          </Col>
         )}
       </Row>
-      <Form>
+      {}
+      <>
         <Row className="mb-3">
           <Col className="me-4">
             <Form.Group>
@@ -115,7 +121,7 @@ const MaterialForm = ({
             </Form.Group>
           </Col>
         </Row>
-      </Form>
+      </>
     </Container>
   );
 };
