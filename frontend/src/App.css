@@ -1,0 +1,5 @@
+/* No seu arquivo App.css */
+.offcanvas .nav-link {
+  /* Cor para o estado normal */
+  color: #2d3748 !important; /* text-gray-700 */
+}
