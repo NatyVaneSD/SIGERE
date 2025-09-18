@@ -1,10 +1,3 @@
----
-
-### **Passo 2: Atualizar o seu Pipeline de CI**
-
-Agora, substitua todo o conteúdo do seu arquivo de pipeline de CI (por exemplo, `.github/workflows/main.yml`) com o código abaixo. Eu o ajustei para usar `sqlite3` e remover as etapas desnecessárias de banco de dados, além de garantir que ele instale todas as suas dependências.
-
-```yaml:.github/workflows/main.yml
 name: Pipeline de CI do Django
 
 on:
