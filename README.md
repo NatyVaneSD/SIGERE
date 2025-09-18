@@ -73,7 +73,7 @@ eliminando os problemas atuais.
 4. Configure o banco de dados SQLite conforme o arquivo .env.example e crie as migrations:
 
     ```bash 
-    poetry run python manage.py migrate
+    python manage.py migrate
 
 5. Inicie o servidor backend:
 
