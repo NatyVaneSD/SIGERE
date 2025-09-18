@@ -3,7 +3,7 @@ name: Django CI
 on:
   push:
     branches:
-      - 'backend-cadastro-de-requisicao'
+      - 'main' # A pipeline será executada toda vez que houver um push para a branch 'main'.
 
 jobs:
   build:
@@ -29,4 +29,6 @@ jobs:
 
       - name: Run tests
         run: |
-          python backend/manage.py test requisicoes
+          # Navega para a pasta do backend antes de rodar os testes
+          cd backend
+          python manage.py test

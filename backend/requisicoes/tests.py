@@ -9,7 +9,7 @@ User = get_user_model()
 class RequisicaoAPITests(APITestCase):
     def setUp(self):
         # Cria um usuário de teste para autenticação
-        self.user = User.objects.create_user(username='teste', password='123')
+        self.user = User.objects.create_user(username='admin', password='Nat#22194')
         self.client.force_authenticate(user=self.user)
         self.list_url = reverse('requisicao-list')
         
