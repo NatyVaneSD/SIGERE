@@ -104,27 +104,53 @@ eliminando os problemas atuais.
 
     ```bash
     SIGERE/
-    ├── backend/                   # Aplicação backend (Django)
-    │   ├── admin/migrations/      # Migrações do módulo admin
-    │   ├── auth/migrations/       # Migrações do módulo de autenticação
-    │   ├── backend_config/        # Configurações principais do backend (Django settings)
-    │   ├── contenttypes/migrations/ # Migrações do módulo contenttypes
-    │   ├── requisicoes/             # App de requisições
-    │   ├── sessions/migrations/   # Migrações do módulo de sessões
-    │   ├── venv/                  # Ambiente virtual Python
-    │   ├── db.sqlite3             # Banco de dados SQLite (desenvolvimento)
-    │   └── manage.py              # Gerenciador Django
-    │
-    ├── frontend/                 # Aplicação frontend (React + Vite)
-    │   ├── public/                # Arquivos públicos (index.html base, imagens, favicon)
-    │   └── src/                   # Código-fonte do frontend
-    │
-    ├── .gitignore                 # Arquivos/pastas ignorados pelo Git
-    ├── README.md                  # Documentação do projeto
-    ├── eslint.config.js           # Configuração do ESLint
-    ├── index.html                 # HTML inicial do Vite
-    ├── package-lock.json          # Dependências lock do npm
-    ├── package.json               # Dependências e scripts do frontend
-    ├── postcss.config.js          # Configuração do PostCSS
-    ├── tailwind.config.js         # Configuração do Tailwind CSS
-    └── vite.config.js             # Configuração do Vite
+├── .github/                       # Configurações do GitHub para automação (ex: CI/CD)
+│   └── workflows/                 # Define fluxos de trabalho
+│       └── ci.yml                 # Arquivo de fluxo de trabalho para integração contínua
+├── backend/                       # Diretório principal da sua aplicação Django
+│   ├── admin/                     # Módulo de administração do Django
+│   ├── auth/                      # Módulo de autenticação
+│   ├── backend_config/            # Configurações do projeto Django
+│   ├── contenttypes/              # Módulo do Django para tipos de conteúdo
+│   ├── requisicoes/               # Sua aplicação Django para o sistema de requisições
+│   │   ├── __pycache__/           # Cache de bytecode Python
+│   │   ├── migrations/            # Migrações do banco de dados para o modelo 'requisicoes'
+│   │   ├── __init__.py            # Torna o diretório um pacote Python
+│   │   ├── admin.py               # Registra modelos no painel de administração
+│   │   ├── apps.py                # Configura a aplicação 'requisicoes'
+│   │   ├── models.py              # Define os modelos de dados (tabelas do banco)
+│   │   ├── serializers.py         # Converte dados do modelo para JSON
+│   │   ├── tests.py               # Arquivos para testes unitários
+│   │   ├── urls.py                # Define as rotas (URLs) da API
+│   │   └── views.py               # Lógica de negócio da API
+│   ├── sessions/                  # Módulo de sessões
+│   ├── venv/                      # Ambiente virtual Python para isolar dependências
+│   ├── db.sqlite3                 # Banco de dados padrão de desenvolvimento
+│   ├── manage.py                  # Utilitário de linha de comando do Django
+│   └── requirements.txt           # Lista de dependências Python do projeto
+├── frontend/                      # Diretório principal da sua aplicação React (Vite)
+│   ├── node_modules/              # Onde as dependências npm são instaladas
+│   ├── public/                    # Arquivos estáticos que não são processados (ex: index.html)
+│   ├── src/                       # Código-fonte da aplicação React
+│   │   ├── assets/                # Para ativos como imagens e fontes
+│   │   ├── components/            # Componentes React reutilizáveis
+│   │   │   ├── Forms.jsx          # Componente do formulário principal
+│   │   │   ├── Login.css          # Estilos CSS específicos para o login
+│   │   │   ├── Login.jsx          # Componente da página de login
+│   │   │   ├── MaterialForm.jsx   # Componente para a parte do formulário de materiais
+│   │   │   └── OffcanvasNavbar.jsx # Componente para a barra de navegação
+│   │   ├── img/                   # Pasta para imagens
+│   │   ├── App.css                # Estilos CSS globais da aplicação
+│   │   ├── App.jsx                # Componente raiz da aplicação React
+│   │   ├── index.css              # Estilos CSS globais, geralmente para o corpo da página
+│   │   └── main.jsx               # Ponto de entrada da aplicação
+│   ├── .gitignore                 # Arquivos e pastas a serem ignorados pelo Git
+│   ├── eslint.config.js           # Configuração do ESLint para JavaScript
+│   ├── index.html                 # A página HTML inicial da aplicação
+│   ├── package-lock.json          # Garante versões de dependências consistentes
+│   ├── package.json               # Lista as dependências e scripts do Node.js
+│   ├── postcss.config.js          # Configuração do PostCSS (ferramenta de transformação de CSS)
+│   ├── tailwind.config.js         # Configuração do Tailwind CSS
+│   └── vite.config.js             # Configuração do bundler Vite
+└── .pylintrc                      # Configuração do linter PyLint para código Python
+└── README.md                      # Documentação do projeto
