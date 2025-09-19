@@ -104,53 +104,28 @@ eliminando os problemas atuais.
 
     ```bash
     SIGERE/
-├── .github/                       # Configurações do GitHub para automação (ex: CI/CD)
-│   └── workflows/                 # Define fluxos de trabalho
-│       └── ci.yml                 # Arquivo de fluxo de trabalho para integração contínua
-├── backend/                       # Diretório principal da sua aplicação Django
-│   ├── admin/                     # Módulo de administração do Django
-│   ├── auth/                      # Módulo de autenticação
-│   ├── backend_config/            # Configurações do projeto Django
-│   ├── contenttypes/              # Módulo do Django para tipos de conteúdo
-│   ├── requisicoes/               # Sua aplicação Django para o sistema de requisições
-│   │   ├── __pycache__/           # Cache de bytecode Python
-│   │   ├── migrations/            # Migrações do banco de dados para o modelo 'requisicoes'
-│   │   ├── __init__.py            # Torna o diretório um pacote Python
-│   │   ├── admin.py               # Registra modelos no painel de administração
-│   │   ├── apps.py                # Configura a aplicação 'requisicoes'
-│   │   ├── models.py              # Define os modelos de dados (tabelas do banco)
-│   │   ├── serializers.py         # Converte dados do modelo para JSON
-│   │   ├── tests.py               # Arquivos para testes unitários
-│   │   ├── urls.py                # Define as rotas (URLs) da API
-│   │   └── views.py               # Lógica de negócio da API
-│   ├── sessions/                  # Módulo de sessões
-│   ├── venv/                      # Ambiente virtual Python para isolar dependências
-│   ├── db.sqlite3                 # Banco de dados padrão de desenvolvimento
-│   ├── manage.py                  # Utilitário de linha de comando do Django
-│   └── requirements.txt           # Lista de dependências Python do projeto
-├── frontend/                      # Diretório principal da sua aplicação React (Vite)
-│   ├── node_modules/              # Onde as dependências npm são instaladas
-│   ├── public/                    # Arquivos estáticos que não são processados (ex: index.html)
-│   ├── src/                       # Código-fonte da aplicação React
-│   │   ├── assets/                # Para ativos como imagens e fontes
-│   │   ├── components/            # Componentes React reutilizáveis
-│   │   │   ├── Forms.jsx          # Componente do formulário principal
-│   │   │   ├── Login.css          # Estilos CSS específicos para o login
-│   │   │   ├── Login.jsx          # Componente da página de login
-│   │   │   ├── MaterialForm.jsx   # Componente para a parte do formulário de materiais
-│   │   │   └── OffcanvasNavbar.jsx # Componente para a barra de navegação
-│   │   ├── img/                   # Pasta para imagens
-│   │   ├── App.css                # Estilos CSS globais da aplicação
-│   │   ├── App.jsx                # Componente raiz da aplicação React
-│   │   ├── index.css              # Estilos CSS globais, geralmente para o corpo da página
-│   │   └── main.jsx               # Ponto de entrada da aplicação
-│   ├── .gitignore                 # Arquivos e pastas a serem ignorados pelo Git
-│   ├── eslint.config.js           # Configuração do ESLint para JavaScript
-│   ├── index.html                 # A página HTML inicial da aplicação
-│   ├── package-lock.json          # Garante versões de dependências consistentes
-│   ├── package.json               # Lista as dependências e scripts do Node.js
-│   ├── postcss.config.js          # Configuração do PostCSS (ferramenta de transformação de CSS)
-│   ├── tailwind.config.js         # Configuração do Tailwind CSS
-│   └── vite.config.js             # Configuração do bundler Vite
-└── .pylintrc                      # Configuração do linter PyLint para código Python
-└── README.md                      # Documentação do projeto
+    ├── .github/                   # Configurações de automação com GitHub Actions (CI/CD)
+    │   └── workflows/             # Fluxos de trabalho de automação
+    │       └── ci.yml             # Define a pipeline de integração contínua
+    │
+    ├── backend/                   # Diretório principal da aplicação Django (API)
+    │   ├── requisicoes/           # App do Django para a gestão de requisições
+    │   │   ├── migrations/        # Histórico de alterações do banco de dados
+    │   │   ├── models.py          # Modelos de dados para requisições e materiais
+    │   │   ├── serializers.py     # Lógica de serialização para a API REST
+    │   │   └── views.py           # A lógica de negócio para os endpoints da API
+    │   ├── venv/                  # Ambiente virtual Python
+    │   ├── manage.py              # Utilitário de linha de comando do Django
+    │   └── requirements.txt       # Dependências Python do projeto
+    │
+    ├── frontend/                  # Diretório principal da aplicação React (Vite)
+    │   ├── public/                # Arquivos estáticos e o template HTML principal
+    │   ├── src/                   # Código-fonte da aplicação
+    │   │   ├── components/        # Componentes reutilizáveis da interface
+    │   │   │   ├── Forms.jsx      # Componente do formulário de requisições
+    │   │   │   └── Login.jsx      # Componente da tela de login
+    │   │   ├── App.jsx            # Componente raiz da aplicação
+    │   │   └── main.jsx           # Ponto de entrada do JavaScript
+    │   └── package.json           # Dependências e scripts do Node.js
+    │
+    └── README.md                  # Documentação principal do projeto
