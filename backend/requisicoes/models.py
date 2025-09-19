@@ -1,4 +1,6 @@
+
 from django.db import models
+from django.core.validators import RegexValidator
 from django.contrib.auth.models import AbstractUser
 
 class Requisicao(models.Model):
@@ -11,7 +13,7 @@ class Requisicao(models.Model):
     unidade_solicitante = models.CharField(max_length=200)
     tipo_exame = models.CharField(max_length=100)
     data_recebimento = models.DateField(blank=True, null=True)
-    numero_protocolo = models.CharField(max_length=100, blank=True, null=True)
+    numero_protocolo = models.CharField(max_length=100, blank=True, null=True, unique= True)
     numero_caso = models.CharField(max_length=100, blank=True, null=True)
     nivel_prioridade = models.CharField(max_length=50)
     status = models.CharField(max_length=50, default='Pendente')
@@ -25,10 +27,23 @@ class Material(models.Model):
 
     # Campos do formulário de Material
     tipo_equipamento = models.CharField(max_length=100)
-    outros_tipo_equipamento = models.CharField(max_length=100, blank=True, null=True) # Campo novo para "Outros"
+    outros_tipo_equipamento = models.CharField(max_length=100, blank=True, null=True)
     quantidade = models.PositiveIntegerField(default=1)
     local_armazenamento = models.CharField(max_length=100)
-    prateleira = models.CharField(max_length=100, blank=True, null=True)
+    
+    # Validador para o campo 'prateleira'
+    prateleira_validator = RegexValidator(
+        regex=r'^[a-zA-Z0-9\s-]*$', 
+        message='O campo prateleira só pode conter letras, números, espaços e hifens.'
+    )
+
+    # Campo 'prateleira' com o validador
+    prateleira = models.CharField(
+        max_length=100,
+        validators=[prateleira_validator],
+        blank=True,
+        null=True
+    )
 
     def __str__(self):
         return f"{self.tipo_equipamento} (Requisição: {self.requisicao.numero_requisicao})"

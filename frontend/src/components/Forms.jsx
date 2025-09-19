@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { Form, Row, Col, Button, Container } from "react-bootstrap";
+import axios from "axios";
+import MaterialForm from "./MaterialForm"; // Importando o componente separado
 import "../App.css";
-import MaterialForm from "./MaterialForm";
 
+// Função para aplicar a máscara, mantida a original do usuário
 const applyMask = (value, maskType) => {
   const digits = value.replace(/\D/g, "");
 
@@ -37,10 +39,9 @@ const applyMask = (value, maskType) => {
 
     case "ipl":
       return digits
-        .slice(0, 0)
+        .slice(0, 11)
         .replace(/(\d{4})(\d)/, "$1.$2")
-        .replace(/(\d{4}\.\d{3})(\d)/, "$1.$2")
-        .replace(/(\d{4}\.\d{3}\.\d{3})(\d)/, "$1-$2");
+        .replace(/(\d{4}\.\d{3})(\d)/, "$1.$2");
 
     default:
       return value;
@@ -63,15 +64,50 @@ export default function Forms({ userCategory }) {
     status: "Pendente",
   });
 
+  const [protocoloError, setProtocoloError] = useState('');
+  const [isVerifying, setIsVerifying] = useState(false);
+
+  const debounce = (func, delay) => {
+    let timeout;
+    return function(...args) {
+      const context = this;
+      clearTimeout(timeout);
+      timeout = setTimeout(() => func.apply(context, args), delay);
+    }
+  };
+
+  const checkNumeroProtocolo = useCallback(
+    debounce(async (numero) => {
+      if (!numero || numero.length < 15) {
+        setProtocoloError('');
+        return;
+      }
+      setIsVerifying(true);
+      try {
+        const response = await axios.get(`http://localhost:8000/api/requisicoes/verificar-protocolo/?numero=${numero}`);
+        if (response.data.existe) {
+          setProtocoloError('Este número de protocolo já está em uso.');
+        } else {
+          setProtocoloError('');
+        }
+      } catch (error) {
+        console.error("Erro ao verificar protocolo:", error);
+      } finally {
+        setIsVerifying(false);
+      }
+    }, 500),
+    []
+  );
+
   const handleRequisicaoChange = (e) => {
     let { name, value } = e.target;
-
     switch (name) {
       case "numero_requisicao":
         value = applyMask(value, "requisicao");
         break;
       case "numero_protocolo":
         value = applyMask(value, "protocolo");
+        checkNumeroProtocolo(value);
         break;
       case "numero_caso":
         value = applyMask(value, "caso");
@@ -84,7 +120,6 @@ export default function Forms({ userCategory }) {
         break;
       }
     }
-
     if (name === "tipo_documento") {
       setRequisicaoData((prev) => ({ ...prev, numero_documento: "", [name]: value }));
     } else {
@@ -97,7 +132,7 @@ export default function Forms({ userCategory }) {
     outrosTipoEquipamento: "",
     quantidade: 1,
     localArmazenamento: "",
-    prateleira: "",
+    prateleira: "", // Campo prateleira adicionado novamente
   };
 
   const [materiais, setMateriais] = useState([initialMaterial]);
@@ -121,13 +156,11 @@ export default function Forms({ userCategory }) {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-
     const token = localStorage.getItem('accessToken');
     if (!token) {
-      alert("Erro: Você não está logado. Por favor, faça o login novamente.");
+      console.error("Erro: Token de acesso não encontrado. Você não está logado.");
       return;
     }
-
     const cleanRequisicaoData = {
       ...requisicaoData,
       numero_requisicao: requisicaoData.numero_requisicao.replace(/\D/g, ''),
@@ -135,27 +168,23 @@ export default function Forms({ userCategory }) {
       numero_documento: requisicaoData.numero_documento.replace(/\D/g, ''),
       numero_caso: requisicaoData.numero_caso.replace(/\D/g, ''),
     };
-
     const materiaisParaEnviar = materiais.map(mat => ({
       tipo_equipamento: mat.tipoEquipamento,
       outros_tipo_equipamento: mat.outrosTipoEquipamento,
       quantidade: mat.quantidade,
       local_armazenamento: mat.localArmazenamento,
-      prateleira: mat.prateleira
+      prateleira: mat.prateleira, // Campo prateleira enviado novamente
     }));
-
     const finalPayload = {
       ...cleanRequisicaoData,
       materiais: materiaisParaEnviar,
     };
-
     console.log("Enviando para o backend:", finalPayload);
-
     fetch("http://localhost:8000/api/requisicoes/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}` // A linha-chave para autenticação
+        "Authorization": `Bearer ${token}`
       },
       body: JSON.stringify(finalPayload),
     })
@@ -167,14 +196,20 @@ export default function Forms({ userCategory }) {
       })
       .then(data => {
         console.log("Sucesso:", data);
-        alert("Requisição cadastrada com sucesso!");
-        setRequisicaoData({ tipo_documento: "", numero_documento: "", numero_requisicao: "", data_requisicao: "", solicitante: "", unidade_solicitante: "", tipo_exame: "", data_recebimento: "", numero_protocolo: "", numero_caso: "", nivel_prioridade: "", status: "Pendente" });
+        window.alert("Requisição cadastrada com sucesso!");
+        setRequisicaoData({
+          tipo_documento: "", numero_documento: "", numero_requisicao: "", data_requisicao: "", solicitante: "", unidade_solicitante: "", tipo_exame: "", data_recebimento: "", numero_protocolo: "", numero_caso: "", nivel_prioridade: "", status: "Pendente",
+        });
         setMateriais([initialMaterial]);
       })
       .catch(error => {
         console.error("Erro ao cadastrar:", error);
-        const errorMessages = Object.entries(error).map(([key, value]) => `${key}: ${Array.isArray(value) ? value.join(", ") : value}`).join("\n");
-        alert(`Erro ao cadastrar:\n${errorMessages}`);
+        if (typeof error === 'object' && error !== null) {
+          const errorMessages = Object.entries(error).map(([key, value]) => `${key}: ${Array.isArray(value) ? value.join(", ") : value}`).join("\n");
+          window.alert(`Erro ao cadastrar:\n${errorMessages}`);
+        } else {
+          window.alert("Ocorreu um erro desconhecido ao cadastrar a requisição.");
+        }
       });
   };
 
@@ -253,7 +288,19 @@ export default function Forms({ userCategory }) {
           <Col className="me-4">
             <Form.Group>
               <Form.Label>Nº do protocolo:</Form.Label>
-              <Form.Control name="numero_protocolo" value={requisicaoData.numero_protocolo} onChange={handleRequisicaoChange} type="text" placeholder="NNNN.NN.NNNNNN" maxLength="15" />
+              <Form.Control
+                name="numero_protocolo"
+                value={requisicaoData.numero_protocolo}
+                onChange={handleRequisicaoChange}
+                type="text"
+                placeholder="NNNN.NN.NNNNNN"
+                maxLength="15"
+                isInvalid={!!protocoloError}
+              />
+              {isVerifying && <Form.Text className="text-muted">Verificando...</Form.Text>}
+              <Form.Control.Feedback type="invalid">
+                {protocoloError}
+              </Form.Control.Feedback>
             </Form.Group>
           </Col>
           <Col>
@@ -287,9 +334,7 @@ export default function Forms({ userCategory }) {
             </Form.Group>
           </Col>
         </Row>
-
         <hr className="my-4" />
-
         {materiais.map((material, index) => (
           <MaterialForm
             key={index}
@@ -299,7 +344,6 @@ export default function Forms({ userCategory }) {
             handleRemoveMaterial={handleRemoveMaterial}
           />
         ))}
-
         <Container className="p-0">
           <Row>
             <div className="d-flex justify-content-start mb-3 gap-2">
