@@ -104,7 +104,7 @@ eliminando os problemas atuais.
 
     ```bash
     SIGERE/
-    ├── .github/                   # Configurações de automação com GitHub Actions (CI/CD)
+    ├── .github/                   # Configurações de automação com GitHub Actions 
     │   └── workflows/             # Fluxos de trabalho de automação
     │       └── ci.yml             # Define a pipeline de integração contínua
     │
